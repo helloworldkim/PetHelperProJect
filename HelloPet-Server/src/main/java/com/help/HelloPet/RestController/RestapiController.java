@@ -99,4 +99,36 @@ public class RestapiController {
 		 //전달된 데이터 확인시 json!!!확인완료 정상적인 json데이터로 보내짐
 		 return response.getBody().toString();
 	}
+		@GetMapping(value = "/abandonmentPublic" )
+	public String findPet(@RequestParam(value = "bgnde") String bgnde,
+			@RequestParam(value = "endde")String endde,
+			@RequestParam(value = "pageNo",defaultValue ="1") String pageNo,
+			@RequestParam(value = "numOfRows",defaultValue = "10") String numOfRows) {
+//			http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/abandonmentPublic?bgnde=20140301&endde=20140430&pageNo=1&numOfRows=10&ServiceKey=서비스키
+		String myApiKey ="&ServiceKey=BKC8cVQJZmzbzk760iM8pPU0%2B%2FMG35Y95n3SBqKnMgCEob9unhBApWNHXrC1qvgoM0vh3CvuWxWZdeyzF1PVNA%3D%3D";
+		 String url = "http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/abandonmentPublic?";
+		 String appendbgnde = "?bgnde="+bgnde;
+		 String appendendde = "&endde="+endde;
+		String appendpageNo = "&pageNo="+pageNo;
+		 String appendnumOfRows = "&numOfRows="+numOfRows;
+		 // RestTemplate 생성
+	        RestTemplate rt = new RestTemplate();
+	        URI uri=null;
+			try {
+				uri = new URI(url+appendbgnde+appendendde+appendpageNo+appendnumOfRows+myApiKey);
+				System.out.println(uri);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+	        ResponseEntity<String> response =  rt.exchange(
+	        		uri,
+	        		HttpMethod.GET,
+	        		null,
+	        		String.class
+    		);
+		 //전달된 데이터 확인시 json!!!확인완료 정상적인 json데이터로 보내짐
+		 return response.getBody().toString();
+	}
+	
+	
 }

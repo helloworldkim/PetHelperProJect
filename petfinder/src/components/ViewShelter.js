@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class ViewSido extends Component {
+class ViewShelter extends Component {
 
     constructor(props) {
         super(props);
@@ -28,4 +28,4 @@ class ViewSido extends Component {
         );
     }
 }
-export default ViewSido;
+export default ViewShelter;

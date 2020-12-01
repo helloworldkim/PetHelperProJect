@@ -3,6 +3,7 @@ import './App.css';
 import ViewSido from './components/ViewSido';
 import ViewSigugun from './components/ViewSigugun';
 import ViewShelter from './components/ViewShelter';
+import ViewCardPets from './components/ViewCardPets';
 const axios = require('axios');
 
 class App extends Component {
@@ -12,6 +13,14 @@ class App extends Component {
       sidos: [],
       siguguns: [],
       shelters: [],
+      pets: [
+        { kind: '강아지', code: 417000 },
+        { kind: '고양이', code: 422400 },
+        { kind: '다른동물들', code: 429900 },
+      ],
+      bgnde: {},
+      endde: {},
+      findedPets: [],
     }
   }
 
@@ -28,7 +37,10 @@ class App extends Component {
   }
 
   findSigungu = async (orgCd) => {
-    console.log("orgCd값:", orgCd);
+    if (this.state.siguguns !== []) {
+      this.setState({ siguguns: [], shelters: [] });
+    }
+    // console.log("orgCd값:", orgCd);
     let res = await axios.default.get('http://localhost:8080/sigungu?orgCd=' + orgCd)
       .catch(err => {
         console.log(err);
@@ -39,6 +51,9 @@ class App extends Component {
     // console.log(result);
   }
   findShelter = async (orgCd, uprCd) => {
+    if (this.state.shelters !== []) {
+      this.setState({ shelters: [] });
+    }
     // console.log("uprCd값:", uprCd);
     // console.log("orgCd값:", orgCd);
     let res = await axios.default.get('http://localhost:8080/shelter?orgCd=' + orgCd + "&uprCd=" + uprCd)
@@ -47,15 +62,62 @@ class App extends Component {
       }
       );
     console.log("쉘터정보요청 response:", res);
-    const result = res.data.response.body.items.item;
-    this.setState({ shelters: result });
-    // console.log(result);
+    if (res.data.response.body.items === '') {  //해당구역에 쉘터가 하나도 없을때
+      alert('해당 구역에는 쉘터가없습니다');
+      return;
+    }
+    console.log(res);
+    // console.log("length", res.data.response.body.items.item.length);
+    const result = res.data.response.body.items.item; //필요한 쉘터 데이터
+    if (res.data.response.body.items.item.length > 1) { //1개 이상일때
+      this.setState({ shelters: result });
+
+    } else {  //한개일때 배열로 보내기위해 처리함
+      let temp = []
+      temp.push(result)
+      this.setState({ shelters: temp });
+    }
+    console.log("현재 쉘터정보!:", this.state.shelters);
   }
 
+  findPet = async (code) => {
+    let res = await axios.default.get('http://localhost:8080/kindofpet?up_kind_cd=' + code)
+      .catch(err => {
+        console.log(err);
+      }
+      );
+    // console.log("fidpet결과값:", res);
+    let result = res.data.response.body.items.item;
+    // console.log("result값:", result);
+    this.setState({ findedPets: result });
+
+  }
+  inputHandler = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  }
+  findAbandonmentPublic = async () => {
+    let res = await axios.default.get(`http://localhost:8080/abandonmentPublic?bgnde=${this.state.bgnde}&endde=${this.state.endde}`)
+      .catch(err => {
+        console.log(err);
+      }
+      );
+    console.log("findAbandonmentPublic:", res);
+    if (res.data.response.body.items === '') {
+      alert('검색결과가 없습니다');
+      return;
+    }
+    let result = res.data.response.body.items.item
+    this.setState({
+      findedPets: result,
+    })
+    console.log(this.state.findedPets);
+  }
   componentDidMount() {
-    this.findSido();
 
   }
+
   render() {
 
     return (
@@ -63,9 +125,9 @@ class App extends Component {
         <div className="container">
 
           <nav class="navbar navbar-expand-sm bg-light">
-            {this.state.sidos.map((item, index) => {
+            {this.state.sidos ? this.state.sidos.map((item, index) => {
               return <ViewSido findSigungu={this.findSigungu} key={index} item={item}></ViewSido>
-            })}
+            }) : ''}
           </nav>
           <nav class="navbar navbar-expand-sm bg-light">
             {this.state.siguguns ? this.state.siguguns.map((item, index) => {
@@ -79,8 +141,28 @@ class App extends Component {
           </nav>
           <button
             className="btn btn-primary"
-          >조회하기</button>
+            onClick={this.findSido}
+          >유기동물 보호센터 위치 조회하기</button>
+          <button
+            className="btn btn-primary"
+          >유기동물 정보 조회하기</button>
+
+          <div class="form-group">
+            <label>검색시작일(YYYYMMDD)</label>
+            <input type="text" name="bgnde" className="form-control" onChange={this.inputHandler} />
+          </div>
+          <div class="form-group">
+            <label>검색종료일(YYYYMMDD)</label>
+            <input type="text" name="endde" className="form-control" onChange={this.inputHandler} />
+          </div>
+          <button class="btn btn-primary" onClick={this.findAbandonmentPublic}>검색</button>
+          <div class="navbar navbar-expand-sm bg-light">
+            {this.state.findedPets ? this.state.findedPets.map((item, index) => {
+              return <ViewCardPets key={index} item={item}></ViewCardPets>
+            }) : ''}
+          </div>
         </div>
+
       </>
     );
   }
