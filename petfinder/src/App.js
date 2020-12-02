@@ -21,6 +21,8 @@ class App extends Component {
       bgnde: {},
       endde: {},
       findedPets: [],
+      totalCount: 0,
+      pageNo: 1,
     }
   }
 
@@ -97,6 +99,7 @@ class App extends Component {
       [e.target.name]: e.target.value
     });
   }
+  //유기동물 날짜로 검색해주는 메서드
   findAbandonmentPublic = async () => {
     let res = await axios.default.get(`http://localhost:8080/abandonmentPublic?bgnde=${this.state.bgnde}&endde=${this.state.endde}`)
       .catch(err => {
@@ -109,10 +112,14 @@ class App extends Component {
       return;
     }
     let result = res.data.response.body.items.item
+    let totalCount = res.data.response.body.totalCount
+    let pageNo = res.data.response.body.pageNo
     this.setState({
       findedPets: result,
+      totalCount: totalCount,
+      pageNo: pageNo,
     })
-    console.log(this.state.findedPets);
+    // console.log(this.state.findedPets);
   }
   componentDidMount() {
 
@@ -149,16 +156,18 @@ class App extends Component {
 
           <div class="form-group">
             <label>검색시작일(YYYYMMDD)</label>
-            <input type="text" name="bgnde" className="form-control" onChange={this.inputHandler} />
+            <input type="date" name="bgnde" className="form-control" onChange={this.inputHandler} />
           </div>
           <div class="form-group">
             <label>검색종료일(YYYYMMDD)</label>
-            <input type="text" name="endde" className="form-control" onChange={this.inputHandler} />
+            <input type="date" name="endde" className="form-control" onChange={this.inputHandler} />
           </div>
-          <button class="btn btn-primary" onClick={this.findAbandonmentPublic}>검색</button>
-          <div class="navbar navbar-expand-sm bg-light">
-            {this.state.findedPets ? this.state.findedPets.map((item, index) => {
-              return <ViewCardPets key={index} item={item}></ViewCardPets>
+          <button className="btn btn-primary" onClick={this.findAbandonmentPublic}>검색</button>
+          {this.state.totalCount !== 0 ? <p>검색된 유기동물 수:{this.state.totalCount}</p> : ''}
+          {/* 유기동물들 프로필 나오는부분 */}
+          <div className="flexContainer">
+            {this.state.findedPets ? this.state.findedPets.map((pet, index) => {
+              return <ViewCardPets key={index} pet={pet} totalCount={this.state.totalCount} pageNo={this.state.pageNo}></ViewCardPets>
             }) : ''}
           </div>
         </div>
@@ -167,4 +176,5 @@ class App extends Component {
     );
   }
 }
+
 export default App;
