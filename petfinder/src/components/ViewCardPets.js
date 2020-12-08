@@ -5,11 +5,11 @@ class ViewCardPets extends Component {
 
     constructor(props) {
         super(props);
-        console.log("props값:", props);
+        // console.log("props값:", props);
         this.state = {
             ...props
         }
-        console.log(this.state.pet);
+        console.log(this.state.total);
     }
     componentDidMount() {
 
@@ -18,7 +18,7 @@ class ViewCardPets extends Component {
     render() {
         return (
             <>
-                <li className="productsList">
+                <li className="petsList">
                     <div className="img">
                         <img className='imgsize' src={this.state.pet.popfile} alt="pet images" />
                     </div>

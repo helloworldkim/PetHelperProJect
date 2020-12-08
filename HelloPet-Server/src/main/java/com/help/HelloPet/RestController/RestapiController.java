@@ -103,12 +103,14 @@ public class RestapiController {
 	public String findPet(@RequestParam(value = "bgnde") String bgnde,
 			@RequestParam(value = "endde")String endde,
 			@RequestParam(value = "pageNo",defaultValue ="1") String pageNo,
-			@RequestParam(value = "numOfRows",defaultValue = "10") String numOfRows) {
+			@RequestParam(value = "numOfRows",defaultValue = "9") String numOfRows) {
+			System.out.println("페이지넘버값");
+			System.out.println(pageNo);
 //			http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/abandonmentPublic?bgnde=20140301&endde=20140430&pageNo=1&numOfRows=10&ServiceKey=서비스키
 		String myApiKey ="&ServiceKey=BKC8cVQJZmzbzk760iM8pPU0%2B%2FMG35Y95n3SBqKnMgCEob9unhBApWNHXrC1qvgoM0vh3CvuWxWZdeyzF1PVNA%3D%3D";
 		 String url = "http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/abandonmentPublic?";
-		 String appendbgnde = "?bgnde="+bgnde;
-		 String appendendde = "&endde="+endde;
+		 String appendbgnde = "?bgnde="+bgnde.replace("-", "");
+		 String appendendde = "&endde="+endde.replace("-", "");
 		String appendpageNo = "&pageNo="+pageNo;
 		 String appendnumOfRows = "&numOfRows="+numOfRows;
 		 // RestTemplate 생성
