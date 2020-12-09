@@ -27,6 +27,13 @@
     <artifactId>json</artifactId>
     <version>20180130</version>
 </dependency>
+<!-- 이메일 발송을 위해 추가하는 디펜던시-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+    <version>1.4.3.RELEASE</version>
+</dependency>
+<!--끝  -->
 	<!--  view 리졸버를 위한 부분-->
 		<dependency> 
 			<groupId>org.apache.tomcat.embed</groupId> 
