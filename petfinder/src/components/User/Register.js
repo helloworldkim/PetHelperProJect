@@ -7,38 +7,24 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import UserApiService from '../ApiService/UserApiService';
+import './Register.css';
 
-const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-}));
 let emailRegExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 let phoneRegExp = /^\d{3}-\d{3,4}-\d{4}$/;
 class Register extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            email: '',
+            username: '',
             password: '',
             phone: '',
             message: null
         }
     }
-    onChange = (e) => {
+    onChangeValues = (e) => {
         this.setState({
             [e.target.name]: e.target.value
         });
@@ -47,7 +33,7 @@ class Register extends Component {
         let email = this.state.email;
         let password = this.state.password;
         let phone = this.state.phone;
-        //값 및 형식체크
+        // 값 및 형식체크
         if (email === "") {
             alert('이메일을 입력해주세요');
             return;
@@ -70,7 +56,7 @@ class Register extends Component {
         }
         //유저객체생성
         let User = {
-            email: this.state.email,
+            username: this.state.email,
             password: this.state.password,
             phone: this.state.phone,
         }
@@ -83,19 +69,21 @@ class Register extends Component {
             });
 
     }
-
     render() {
         return (
             <>
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
-                    <div className={useStyles.paper}>
-                        <Avatar className={useStyles.avatar}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            회원가입
-                        </Typography>
+                    <div className="paper">
+                        <div className="titleBox">
+                            <Avatar className="avatar">
+                                <LockOutlinedIcon />
+                            </Avatar>
+                            <Typography component="h1" variant="h5">
+                                회원가입
+                            </Typography>
+
+                        </div>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
@@ -105,7 +93,7 @@ class Register extends Component {
                                     id="email"
                                     label="이메일"
                                     name="email"
-                                    onChange={this.onChange}
+                                    onChange={this.onChangeValues}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -116,7 +104,7 @@ class Register extends Component {
                                     name="password"
                                     label="비밀번호"
                                     type="password"
-                                    onChange={this.onChange}
+                                    onChange={this.onChangeValues}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -136,7 +124,7 @@ class Register extends Component {
                             fullWidth
                             variant="contained"
                             color="primary"
-                            className={useStyles.submit}
+                            className="submit"
                             children="가입하기"
                             onClick={this.register}
                         />

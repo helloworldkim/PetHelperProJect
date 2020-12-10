@@ -19,7 +19,7 @@ public class UserService {
 	private final JavaMailSender javaMailSender;
 	//이메일 발송
 	public void signUpEmailSender(User user) {
-		String email = user.getEmail();
+		String email = user.getUsername();
 		MimeMessage mail = javaMailSender.createMimeMessage();
 		String mailContent = "<h1>[이메일 인증]</h1><br><p>아래 링크를 클릭하시면 이메일 인증이 완료됩니다.</p>"
 		                    + "<a href='http://localhost:8080/check_email?email=" 
