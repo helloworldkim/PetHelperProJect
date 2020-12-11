@@ -1,7 +1,6 @@
 package com.help.HelloPet.RestController;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,13 +19,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.help.HelloPet.config.jwt.JwtProperties;
+import com.help.HelloPet.config.jwt.MyJwt;
 import com.help.HelloPet.model.User;
 import com.help.HelloPet.repository.UserRepository;
 import com.help.HelloPet.service.UserService;
 
 @RestController
 public class UserController {
-	
+	@Autowired
+	MyJwt jwt;
 	@Autowired
 	UserRepository userRepository;
 
@@ -39,24 +40,23 @@ public class UserController {
 	@GetMapping("/user/j1")
 	public String halo() {
 //		String encodedPassword= passwordEncoder.encode("1111");
-//		User newUser = User.builder()
-//				.username("localkey@naver.com")
-//				.password(encodedPassword)
-//				.phone("010-1111-2222")
-//				.role("ROLE_USER")
-//				.emailVerification(false)
-//				.build();
-//		//이메일 토큰생성
-//		newUser.generateEmailCheckToken();
-//		System.out.println(newUser);
-//		//회원가입
-//		userRepository.save(newUser);
+		User newUser = User.builder()
+				.username("localkey@naver.com")
+				.password("1111")
+				.phone("010-1111-2222")
+				.role("ROLE_USER")
+				.emailVerification(false)
+				.build();
+		//이메일 토큰생성
+		newUser.generateEmailCheckToken();
+		System.out.println(newUser);
+		//회원가입
+		userRepository.save(newUser);
 		return "회원가입 ok";
 	}
 	@GetMapping("/hello")
 	public String siba(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("인증이나 권한이 필요한 주소요청 됨");
-		System.out.println(request);
 		String jwtHeader = request.getHeader("Authorization");
 		System.out.println("jwtHeader :"+jwtHeader);
 		//header가 있는지 확인
@@ -67,12 +67,19 @@ public class UserController {
 		String jwtToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
 		
 		String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken).getClaim("email").asString();
+		System.out.println("이메일!!!!!!!!!!!!!!!!!!");
+		System.out.println(email);
+		User userEntity=null;
 		if(email != null) {
-			User userEntity = userRepository.findByUsername(email);
+			userEntity = userRepository.findByUsername(email);
 		}
 			
 	
-		return "체크체크 헤더체크";
+		return userEntity.toString();
+	}
+	@GetMapping("/user/logout")
+	public String logout() {
+		return "로그아웃!";
 	}
 	@PostMapping("/user/login")
 	public Map<String, String> login(HttpServletRequest request, HttpServletResponse response) throws JsonParseException, JsonMappingException, IOException {
@@ -84,19 +91,11 @@ public class UserController {
 			User userEntity = userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
 			Map<String, String> map = new HashMap<>();
 			if(userEntity != null) {
-				//RSA방식 아니고 HASH 암호방식!
-				String jwtToken = JWT.create()
-						//헤드
-						.withSubject("cos토큰")
-						//페이로드
-						.withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))
-						.withClaim("id", userEntity.getId())
-						.withClaim("email", userEntity.getUsername())
-						//서명
-						.sign(Algorithm.HMAC512(JwtProperties.SECRET));	//시크릿코드 사인하는부분 HMAC512은 특징적으로 시크릿값을 가지고 있어야함
-				map.put("Authorization", JwtProperties.TOKEN_PREFIX+jwtToken);
-				response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
-				return map;
+				//토큰생성
+				String jwtToken = jwt.createToken(userEntity.getId(), userEntity.getUsername());
+				map.put(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);	//Authorization : Bearer 토큰값 형식
+//				response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
+				return map; //데이터 body에 정보전달 해서 react에서 session스토리지에 저장할예정
 			}
 			System.out.println("===============================================");
 			return null;

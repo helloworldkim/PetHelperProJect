@@ -17,12 +17,26 @@ class Register extends Component {
 
     constructor(props) {
         super(props);
+        console.log();
         this.state = {
             username: '',
             password: '',
             phone: '',
             message: null
         }
+    }
+    componentDidMount() {
+        this.checkJWTToken();
+    }
+    checkJWTToken = () => {
+        let JWT = sessionStorage.getItem("Authorization");
+        console.log(JWT);
+        if (JWT === null) {
+            return;
+        }
+        //홈경로로 보냄
+        this.props.history.push('/');
+
     }
     onChangeValues = (e) => {
         this.setState({

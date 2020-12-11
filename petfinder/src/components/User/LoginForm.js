@@ -17,6 +17,20 @@ class LoginForm extends Component {
             password: '',
         }
     }
+    componentDidMount() {
+        this.checkJWTToken();
+    }
+    checkJWTToken = () => {
+        let JWT = sessionStorage.getItem("Authorization");
+        console.log(JWT);
+        if (JWT === null) {
+            return;
+        }
+        alert('이미로그인하셨습니다');
+        //홈경로로 보냄
+        this.props.history.push('/');
+
+    }
     onChangeValues = (e) => {
         this.setState({
             [e.target.name]: e.target.value
@@ -44,6 +58,7 @@ class LoginForm extends Component {
         UserApiService.login(User)
             .then(res => {
                 console.log("데이터값:", res.data);
+                // 결과값으로 받은 JWT토근을 session에 저장함
                 sessionStorage.setItem("Authorization", res.data.Authorization);
                 let JWT = sessionStorage.getItem("Authorization");
                 console.log(JWT);
@@ -51,6 +66,9 @@ class LoginForm extends Component {
             .catch(err => {
                 console.log(err);
             });
+        alert('로그인되셨습니다.');
+        //홈경로로 보냄
+        this.props.history.push('/');
     }
     render() {
         return (
