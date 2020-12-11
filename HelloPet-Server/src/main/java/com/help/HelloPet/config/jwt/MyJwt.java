@@ -13,7 +13,8 @@ public class MyJwt {
     public String createToken(int id, String username) {
     	//RSA방식 아니고 HASH 암호방식!
 		String jwtToken = JWT.create()
-				//헤드
+				//헤더에는 자동으로 해당encoding에 사용된 알고리즘 값과 typ이 JWT로 들어감	
+				//헤드가 아니였음! 그냥 주제!
 				.withSubject("cos토큰")
 				//페이로드
 				.withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))

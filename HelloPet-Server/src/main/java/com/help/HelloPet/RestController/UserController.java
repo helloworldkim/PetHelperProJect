@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.help.HelloPet.config.jwt.JwtProperties;
+import com.help.HelloPet.config.jwt.MyJjwt;
 import com.help.HelloPet.config.jwt.MyJwt;
 import com.help.HelloPet.model.User;
 import com.help.HelloPet.repository.UserRepository;
@@ -28,6 +29,8 @@ import com.help.HelloPet.service.UserService;
 public class UserController {
 	@Autowired
 	MyJwt jwt;
+	@Autowired
+	MyJjwt jjwt;
 	@Autowired
 	UserRepository userRepository;
 
@@ -55,7 +58,7 @@ public class UserController {
 		return "회원가입 ok";
 	}
 	@GetMapping("/hello")
-	public String siba(HttpServletRequest request, HttpServletResponse response) {
+	public String siba(HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		System.out.println("인증이나 권한이 필요한 주소요청 됨");
 		String jwtHeader = request.getHeader("Authorization");
 		System.out.println("jwtHeader :"+jwtHeader);
@@ -65,17 +68,19 @@ public class UserController {
 			return null;
 		}
 		String jwtToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
-		
-		String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken).getClaim("email").asString();
-		System.out.println("이메일!!!!!!!!!!!!!!!!!!");
-		System.out.println(email);
-		User userEntity=null;
-		if(email != null) {
-			userEntity = userRepository.findByUsername(email);
-		}
+		//유효기간 만료 아니면 정상토근이라고 반환됨 만료시 토큰만료 라고 String값 반환
+		String result = jjwt.getTokenFromJwtString(jwtToken); 
+//		String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken).getClaim("email").asString();
+//		System.out.println("이메일!!!!!!!!!!!!!!!!!!");
+//		System.out.println(email);
+//		User userEntity=null;
+//		if(email != null) {
+//			userEntity = userRepository.findByUsername(email);
+//		}
 			
 	
-		return userEntity.toString();
+//		return userEntity.toString();
+		return result;
 	}
 	@GetMapping("/user/logout")
 	public String logout() {
@@ -91,8 +96,10 @@ public class UserController {
 			User userEntity = userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
 			Map<String, String> map = new HashMap<>();
 			if(userEntity != null) {
-				//토큰생성
-				String jwtToken = jwt.createToken(userEntity.getId(), userEntity.getUsername());
+				//토큰생성 jwt 라이브러리
+//				String jwtToken = jwt.createToken(userEntity.getId(), userEntity.getUsername());
+				//jjwt 라이브러리
+				String jwtToken = jjwt.createToken(userEntity.getId(), userEntity.getUsername());
 				map.put(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);	//Authorization : Bearer 토큰값 형식
 //				response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
 				return map; //데이터 body에 정보전달 해서 react에서 session스토리지에 저장할예정
