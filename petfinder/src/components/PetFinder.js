@@ -26,6 +26,7 @@ class PetFinder extends Component {
         }
     }
 
+
     findSido = async () => {
         let res = await axios.default.get('http://localhost:8080/sido')
             .catch(err => {
@@ -97,8 +98,21 @@ class PetFinder extends Component {
             [e.target.name]: e.target.value
         });
     }
+    checkLogin = () => {
+        console.log(sessionStorage.getItem("Authorization"));
+        if (sessionStorage.getItem("Authorization") === null) {
+            alert('로그인 후 이용가능합니다')
+            let login = '/login';
+            window.location.assign(login);
+            return false;
+        }
+    }
     //유기동물 날짜로 검색해주는 메서드
     findAbandonmentPublic = async () => {
+        //jwt없으면 로그인하라고 로그인페이지로 보낸다!
+        if (this.checkLogin() === false) {
+            return;
+        }
         //기존에 데이터가있으면 새로 랜더링 하도록 초기화
         this.setState({
             findedPets: [],
@@ -109,11 +123,21 @@ class PetFinder extends Component {
             return;
         }
         //api 데이터 요청
-        let res = await axios.default.get(`http://localhost:8080/abandonmentPublic?bgnde=${this.state.bgnde}&endde=${this.state.endde}&pageNo=${this.state.pageNo}`)
+        let URL = `http://localhost:8080/abandonmentPublic?bgnde=${this.state.bgnde}&endde=${this.state.endde}&pageNo=${this.state.pageNo}`;
+        let JWT = sessionStorage.getItem("Authorization");
+        let res = await axios.default.get(URL, { headers: { "Authorization": JWT } })
             .catch(err => {
                 console.log(err);
             }
             );
+        //해당부분 false떠서 check가 안됨
+        if (res.data === "토큰만료") {
+            sessionStorage.removeItem("Authorization");
+            alert('다시 로그인해주세요');
+            let login = '/login';
+            window.location.assign(login);
+            return;
+        }
         console.log("findAbandonmentPublic:", res);
         if (res.data.response.body.items === '') {
             alert('검색결과가 없습니다');

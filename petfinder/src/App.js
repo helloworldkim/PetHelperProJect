@@ -17,25 +17,25 @@ class App extends Component {
   }
 
 
-  tokenCheck = () => {
-    console.log(JWT);
-    UserApiService.gotohello(JWT)
-      .then(res => {
-        console.log(res);
-        let tokenCheckResult = res.data;
-        console.log(tokenCheckResult);
-        if (tokenCheckResult === '토큰만료') {
-          //토큰만료됬다는 데이터가 오면 로그인페이지로 강제이동
-          // 토큰이 저장된 세션 지우고
-          sessionStorage.removeItem("Authorization");
-          let login = '/login';
-          window.location.assign(login);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+  // tokenCheck = () => {
+  //   console.log(JWT);
+  //   UserApiService.gotohello(JWT)
+  //     .then(res => {
+  //       console.log(res);
+  //       let tokenCheckResult = res.data;
+  //       console.log(tokenCheckResult);
+  //       if (tokenCheckResult === '토큰만료') {
+  //         //토큰만료됬다는 데이터가 오면 로그인페이지로 강제이동
+  //         // 토큰이 저장된 세션 지우고
+  //         sessionStorage.removeItem("Authorization");
+  //         let login = '/login';
+  //         window.location.assign(login);
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // }
 
   render() {
     console.log(JWT);
@@ -93,9 +93,6 @@ class App extends Component {
                 <li className="nav-item m-2">
                   <Link to="/logout">로그아웃 페이지</Link>
                 </li>
-                <button
-                  onClick={this.tokenCheck}
-                  children="토큰체크" />
               </ul>
             </nav>
             <Switch>

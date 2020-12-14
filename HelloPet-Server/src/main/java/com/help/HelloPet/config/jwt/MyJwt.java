@@ -10,7 +10,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 @Service
 public class MyJwt {
 	 //토큰 생성
-    public String createToken(int id, String username) {
+    public static String createToken(int id, String username) {
     	//RSA방식 아니고 HASH 암호방식!
 		String jwtToken = JWT.create()
 				//헤더에는 자동으로 해당encoding에 사용된 알고리즘 값과 typ이 JWT로 들어감	
@@ -19,7 +19,7 @@ public class MyJwt {
 				//페이로드
 				.withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))
 				.withClaim("id", id)
-				.withClaim("email", username)
+				.withClaim("username", username)
 				//서명
 				.sign(Algorithm.HMAC512(JwtProperties.SECRET));	//시크릿코드 사인하는부분 HMAC512은 특징적으로 시크릿값을 가지고 있어야함
         return jwtToken;
