@@ -58,17 +58,25 @@ class LoginForm extends Component {
         UserApiService.login(User)
             .then(res => {
                 console.log("데이터값:", res.data);
+                let result = res.data.result;
+                console.log("result값:", result);
+                if (result === 'fail') {
+                    alert('정보가 다릅니다.');
+                    return;
+                }
                 // 결과값으로 받은 JWT토근을 session에 저장함
                 sessionStorage.setItem("Authorization", res.data.Authorization);
                 let JWT = sessionStorage.getItem("Authorization");
-                console.log(JWT);
+                // console.log(JWT);
+                //홈경로로 보냄
+                alert('로그인성공');
+                // window.location.assign('/');//redirect형식으로 보내버림
+                // this.props.history.push('/');
             })
             .catch(err => {
                 console.log(err);
             });
-        alert('로그인되셨습니다.');
-        //홈경로로 보냄
-        this.props.history.push('/');
+
     }
     render() {
         return (

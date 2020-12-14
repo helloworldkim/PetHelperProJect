@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import com.help.HelloPet.repository.UserRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -24,10 +26,7 @@ public class MyJjwt {
 	    headers.put("alg", "HS512");
 	     
 	    Map<String, Object> payloads = new HashMap<>();
-	    Long expiredTime = 1000 * 60l; // 만료기간 1분    
-//	    Date now = new Date();
-//	    now.setTime(now.getTime() + expiredTime);    
-//	    payloads.put("exp", now);
+	    Long expiredTime = 1000 * 60l*30; // 만료기간 30분
 	    payloads.put("id", id);
 	    payloads.put("username", username);
 	    Date ext = new Date(); // 토큰 만료 시간
@@ -35,6 +34,7 @@ public class MyJjwt {
 	    
 	    String jwt = Jwts.builder()
 	            .setHeader(headers)
+	            .setSubject("cos토큰")
 	            .setClaims(payloads)
 	            .setExpiration(ext)
 	            .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
@@ -61,6 +61,10 @@ public class MyJjwt {
 		
 		return null;
 		
+	}
+	public String getUsernameFromClaim(Claims claims) {
+		String username = claims.get("username").toString();
+		return username;
 	}
 	
 }

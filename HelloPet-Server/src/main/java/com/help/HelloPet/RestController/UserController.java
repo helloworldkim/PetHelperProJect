@@ -8,13 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,15 +36,31 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
-//	@Autowired
-//	BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	BCryptPasswordEncoder passwordEncoder;
 	
+	@GetMapping("/redi")
+	public void redi(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.sendRedirect("http://localhost:3000/login");
+	}
+	@GetMapping("/api/v1/user")
+	public String user() {
+		return"유저!";
+	}
+	@GetMapping("/api/v1/manager")
+	public String manager() {
+		return"manager!";
+	}
+	@GetMapping("/api/v1/admin")
+	public String admin() {
+		return"admin!";
+	}
 	@GetMapping("/user/j1")
 	public String halo() {
-//		String encodedPassword= passwordEncoder.encode("1111");
+		String encodedPassword= passwordEncoder.encode("1111");
 		User newUser = User.builder()
 				.username("localkey@naver.com")
-				.password("1111")
+				.password(encodedPassword)
 				.phone("010-1111-2222")
 				.role("ROLE_USER")
 				.emailVerification(false)
@@ -58,7 +73,7 @@ public class UserController {
 		return "회원가입 ok";
 	}
 	@GetMapping("/hello")
-	public String siba(HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
+	public String siba(HttpServletRequest request, HttpServletResponse response) throws InterruptedException, IOException {
 		System.out.println("인증이나 권한이 필요한 주소요청 됨");
 		String jwtHeader = request.getHeader("Authorization");
 		System.out.println("jwtHeader :"+jwtHeader);
@@ -69,43 +84,30 @@ public class UserController {
 		}
 		String jwtToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
 		//유효기간 만료 아니면 정상토근이라고 반환됨 만료시 토큰만료 라고 String값 반환
+//		정상토큰인지 아닌지 확인! 
 		String result = jjwt.getTokenFromJwtString(jwtToken); 
-//		String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken).getClaim("email").asString();
-//		System.out.println("이메일!!!!!!!!!!!!!!!!!!");
-//		System.out.println(email);
-//		User userEntity=null;
-//		if(email != null) {
-//			userEntity = userRepository.findByUsername(email);
-//		}
-			
-	
-//		return userEntity.toString();
+//		토큰이 정상이면 result값으로 정상토큰 만료되었을 경우 만료토큰
 		return result;
-	}
-	@GetMapping("/user/logout")
-	public String logout() {
-		return "로그아웃!";
 	}
 	@PostMapping("/user/login")
 	public Map<String, String> login(HttpServletRequest request, HttpServletResponse response) throws JsonParseException, JsonMappingException, IOException {
-		 System.out.println(request);
 			ObjectMapper om = new ObjectMapper();
 			User user = om.readValue(request.getInputStream(), User.class);
-			System.out.println(user.getUsername());
-			System.out.println(user.getPassword());
+			//해당 유저객체가 있을경우
 			User userEntity = userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
 			Map<String, String> map = new HashMap<>();
 			if(userEntity != null) {
-				//토큰생성 jwt 라이브러리
-//				String jwtToken = jwt.createToken(userEntity.getId(), userEntity.getUsername());
 				//jjwt 라이브러리
+				//토큰생성
 				String jwtToken = jjwt.createToken(userEntity.getId(), userEntity.getUsername());
 				map.put(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);	//Authorization : Bearer 토큰값 형식
-//				response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
+				map.put("result", "success");
+//				response.addHeader("Authorization", jwtToken);
 				return map; //데이터 body에 정보전달 해서 react에서 session스토리지에 저장할예정
 			}
 			System.out.println("===============================================");
-			return null;
+			map.put("result", "fail");
+			return map;
 	}
 	
 	//join주소로 POST요청

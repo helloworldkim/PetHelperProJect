@@ -37,7 +37,7 @@
 	</dependency>
 	<!--  jwt 끝-->
 	<!-- 스프링 시큐리티 추가부분-->
-<!-- 		<dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency> -->
+		</dependency>
 	<!--  끝-->
 	<!--xml->json으로 convert하기위해서 추가한 디펜던시  -->
 	<!-- https://mvnrepository.com/artifact/org.json/json -->
