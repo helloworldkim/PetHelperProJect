@@ -18,13 +18,13 @@ public class MyJjwt {
 	
 	public static  String createToken(Integer id, String username) {
 	    String SECRET = JwtProperties.SECRET;
+	    int expiredTime = JwtProperties.EXPIRATION_TIME;
 	    
 	    Map<String, Object> headers = new HashMap<>();    
 	    headers.put("typ", "JWT");
 	    headers.put("alg", "HS512");
 	     
 	    Map<String, Object> payloads = new HashMap<>();
-	    Long expiredTime = 1000*30l; // 만료기간 30초
 //	    Long expiredTime = 1000 * 60l*30; // 만료기간 30분
 	    payloads.put("id", id);
 	    payloads.put("username", username);

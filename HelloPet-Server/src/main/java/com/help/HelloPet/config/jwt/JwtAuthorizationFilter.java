@@ -25,11 +25,11 @@ import io.jsonwebtoken.Claims;
 //만약에 권한이나 인증이 필요없으면 해당필터를 안탐!
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
 	public JwtAuthorizationFilter(AuthenticationManager authenticationManager,UserRepository userRepository) {
 		super(authenticationManager);
-		this.userRepository = userRepository;
+		this.userRepository = userRepository ;
 	}
 	
  @Override
@@ -51,13 +51,15 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
 	String jwtToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
 	String result = MyJjwt.getTokenFromJwtString(jwtToken);
 	System.out.println(result);
+	
+	// 비정상 or 토큰만료의 경우 filter 체인 통과못하고 막힘
 	if(result.equals("비정상적인접근")) {
-	return;
-		
+		PrintWriter out = response.getWriter();
+		out.print("비정상적인접근");
 	}else if(result.equals("토큰만료")) {
 		System.out.println("토큰유효기간이 만료됨");
 		PrintWriter out = response.getWriter();
-		out.println("토큰만료");		
+		out.print("토큰만료");
 		
 	}else {
 

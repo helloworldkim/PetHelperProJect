@@ -3,6 +3,7 @@ package com.help.HelloPet.RestController;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,12 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-public class RestapiController {
+public class RestApiController {
+	
+	@Value("${publicApiKey}")
+	private String key;
 	
 	//시도 코드조회 예제
 	@GetMapping(value = "/sido" )
 	public String petSido() {
-		String myApiKey ="&serviceKey=BKC8cVQJZmzbzk760iM8pPU0%2B%2FMG35Y95n3SBqKnMgCEob9unhBApWNHXrC1qvgoM0vh3CvuWxWZdeyzF1PVNA%3D%3D";
+		String myApiKey = "&ServiceKey="+key;
 		 String url = "http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/sido?numOfRows=20";
 		// RestTemplate 생성
 	        RestTemplate rt = new RestTemplate();
@@ -51,8 +55,8 @@ public class RestapiController {
 	
 	@GetMapping(value = "/sigungu" )
 	public String petSigungu(@RequestParam(value = "orgCd") String orgCd) {
-		String myApiKey ="&serviceKey=BKC8cVQJZmzbzk760iM8pPU0%2B%2FMG35Y95n3SBqKnMgCEob9unhBApWNHXrC1qvgoM0vh3CvuWxWZdeyzF1PVNA%3D%3D";
-		 String url = "http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/sigungu?upr_cd=";
+		String myApiKey = "&ServiceKey="+key;
+		String url = "http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/sigungu?upr_cd=";
 		// RestTemplate 생성
 	        RestTemplate rt = new RestTemplate();
 	        URI uri=null;
@@ -77,7 +81,7 @@ public class RestapiController {
 			@RequestParam(value = "uprCd")String uprCd) {
 		System.out.println(uprCd);
 		System.out.println(orgCd);
-		String myApiKey ="&ServiceKey=BKC8cVQJZmzbzk760iM8pPU0%2B%2FMG35Y95n3SBqKnMgCEob9unhBApWNHXrC1qvgoM0vh3CvuWxWZdeyzF1PVNA%3D%3D";
+		String myApiKey = "&ServiceKey="+key;
 		String appendUpr_cd = "?upr_cd="+uprCd;
 		String appenorcCd = "&org_cd="+orgCd;
 		 String url = "http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/shelter";
@@ -99,7 +103,8 @@ public class RestapiController {
 		 //전달된 데이터 확인시 json!!!확인완료 정상적인 json데이터로 보내짐
 		 return response.getBody().toString();
 	}
-		@GetMapping(value = "/abandonmentPublic" )
+	
+	@GetMapping(value = "/abandonmentPublic" )
 	public String findPet(@RequestParam(value = "bgnde") String bgnde,
 			@RequestParam(value = "endde")String endde,
 			@RequestParam(value = "pageNo",defaultValue ="1") String pageNo,
@@ -107,7 +112,7 @@ public class RestapiController {
 			System.out.println("페이지넘버값");
 			System.out.println(pageNo);
 //			http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/abandonmentPublic?bgnde=20140301&endde=20140430&pageNo=1&numOfRows=10&ServiceKey=서비스키
-		String myApiKey ="&ServiceKey=BKC8cVQJZmzbzk760iM8pPU0%2B%2FMG35Y95n3SBqKnMgCEob9unhBApWNHXrC1qvgoM0vh3CvuWxWZdeyzF1PVNA%3D%3D";
+		String myApiKey = "&ServiceKey="+key;
 		 String url = "http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc/abandonmentPublic?";
 		 String appendbgnde = "?bgnde="+bgnde.replace("-", "");
 		 String appendendde = "&endde="+endde.replace("-", "");

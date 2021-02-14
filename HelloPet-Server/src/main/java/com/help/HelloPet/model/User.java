@@ -21,14 +21,15 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private String username;
+	//이메일을 아이디로 사용할 예정
+	private String username;		
 	private String password;
 	private String phone;
 	//권한 받는곳
-	private String role;
-	// 이메일 인증 여부 확인
+	private String role;	// ROLE_USER
+	// 이메일 인증 여부 확인 기본값 false
 	private boolean emailVerification;
-	// 이메일 토큰
+	// 이메일 토큰	임의의값
 	private String emailCheckToken;
 	
 	//이메일 인증용 임의의 값 만들어주는 부분

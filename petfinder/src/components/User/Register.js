@@ -3,7 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -17,7 +16,6 @@ class Register extends Component {
 
     constructor(props) {
         super(props);
-        console.log();
         this.state = {
             username: '',
             password: '',
@@ -34,8 +32,8 @@ class Register extends Component {
         if (JWT === null) {
             return;
         }
-        //홈경로로 보냄
-        this.props.history.push('/');
+        //JWT 토큰이 존재한다면 이미 로그인한 사용자임 홈으로 보낸다
+        window.location.assign('/');
 
     }
     onChangeValues = (e) => {
@@ -77,6 +75,15 @@ class Register extends Component {
         UserApiService.registerUser(User)
             .then(res => {
                 console.log("결과값:", res);
+                console.log(res.status);
+                // 결과값으로 받은 JWT토근을 session에 저장함
+                sessionStorage.setItem("Authorization", res.data.Authorization);
+                let JWT = sessionStorage.getItem("Authorization");
+                console.log(JWT);
+                //홈경로로 보냄
+                alert('회원가입완료');
+                window.location.assign('/');//redirect형식으로 보내버림
+                
             })
             .catch(err => {
                 console.log(err);
@@ -129,7 +136,7 @@ class Register extends Component {
                                     name="phone"
                                     label="휴대폰"
                                     type="text"
-                                    onChange={this.onChange}
+                                    onChange={this.onChangeValues}
                                 />
                             </Grid>
                         </Grid>
@@ -142,13 +149,6 @@ class Register extends Component {
                             children="가입하기"
                             onClick={this.register}
                         />
-                        <Grid container justify="flex-end">
-                            <Grid item>
-                                <Link href="/login" variant="body2">
-                                    Already have an account? Sign in
-              </Link>
-                            </Grid>
-                        </Grid>
                     </div>
                 </Container>
             </>

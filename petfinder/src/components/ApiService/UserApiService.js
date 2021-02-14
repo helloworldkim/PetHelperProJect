@@ -10,9 +10,9 @@ class UserApiService {
     login(User) {
         return axios.post('http://localhost:8080/login', User);
     }
-    // gotohello(token) {
-    //     return axios.get("http://localhost:8080/hello", { headers: { Authorization: token } });
-    // }
+    jwtcheck(token) {
+        return axios.get("http://localhost:8080/user/jwtcheck", { headers: { Authorization: token } });
+    }
 }
 
 export default new UserApiService();

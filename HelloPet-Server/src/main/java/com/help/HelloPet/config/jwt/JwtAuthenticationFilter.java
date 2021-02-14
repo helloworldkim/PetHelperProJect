@@ -1,21 +1,25 @@
 package com.help.HelloPet.config.jwt;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.help.HelloPet.config.auth.PrincipalDetails;
 import com.help.HelloPet.model.User;
+import com.help.HelloPet.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,8 +30,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-	private final AuthenticationManager authenticationManager;
+	BCryptPasswordEncoder passwordEncoder;
+	AuthenticationManager authenticationManager;
+	UserRepository userRepository;
 	
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserRepository userRepository,
+			BCryptPasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
+	}
 	// /login 요청을 하면 로그인시도를 위해서 실행되는 함수
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -44,6 +56,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			ObjectMapper om = new ObjectMapper();
 			User user = om.readValue(request.getInputStream(), User.class);
 			System.out.println(user);
+			System.out.println("===================================로그인 확인하자!");
+			//해당 유저정보를 바탕으로 entity 조회 후 없는경우 비회원이라고 반환
+			User userEntity = userRepository.findByUsername(user.getUsername());
+			if(userEntity == null) {
+				PrintWriter out =  response.getWriter();
+				out.print("비회원");
+				return null;
+			}
+			if(userEntity !=null) {
+				boolean pwCheck = passwordEncoder.matches(user.getPassword(), userEntity.getPassword());
+				if(!pwCheck) {
+					PrintWriter out =  response.getWriter();
+					out.print("정보확인요망");
+					return null;
+				}
+			}
 			System.out.println("===============================================");
 			UsernamePasswordAuthenticationToken authenticationToken = 
 					new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
@@ -63,7 +91,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			return authentication;
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 		return null;
 	}
 	
@@ -87,4 +115,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	    );
 		
 	}
+
+	
+	
 }

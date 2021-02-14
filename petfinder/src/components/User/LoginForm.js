@@ -57,15 +57,18 @@ class LoginForm extends Component {
         }
         UserApiService.login(User)
             .then(res => {
+                let data = res.data;
                 console.log("데이터값:", res.data);
-                // console.log("헤더값:", res.headers);
-                let result = res.data.result;
-                console.log("result값:", result);
-                if (result === 'fail') {
-                    alert('정보가 다릅니다.');
+                //아이디 또는 비밀번호로 조회했을때 db에 값이 없을경우 비회원 이라는 값이 리턴됨
+                if (data === '비회원') {
+                    alert('회원이 아닙니다');
                     return;
                 }
-                // 결과값으로 받은 JWT토근을 session에 저장함
+                if (data === '정보확인요망') {
+                    alert('입력하신 정보가 틀렸습니다.');
+                    return;
+                }
+                //비회원이 아닐경우 JWT토큰을 받음 JWT토근을 session에 저장함
                 sessionStorage.setItem("Authorization", res.data.Authorization);
                 let JWT = sessionStorage.getItem("Authorization");
                 console.log(JWT);
@@ -115,30 +118,6 @@ class LoginForm extends Component {
                         className="submit"
                         children="로그인"
                         onClick={this.login}
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className="submit"
-                        children="구글로그인"
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className="submit"
-                        children="페이스북 로그인"
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className="submit"
-                        children="네이버 로그인"
                     />
                     <Grid container>
                         <Grid item xs>
