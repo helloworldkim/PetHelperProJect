@@ -20,6 +20,12 @@
 	</properties>
 
 	<dependencies>
+	<!--mybatis 라이브러리 추가  -->
+	<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>2.1.4</version>
+		</dependency>
 	<!--jwt 유효성 검증위해서 다른라이브러리 가져와서 사용해봄  -->
 	<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
 <dependency>

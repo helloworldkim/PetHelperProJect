@@ -3,7 +3,6 @@ package com.help.HelloPet.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -11,7 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.filter.CorsFilter;
 
-import com.help.HelloPet.config.auth.PrincipalDetailsService;
 import com.help.HelloPet.config.jwt.JwtAuthenticationFilter;
 import com.help.HelloPet.config.jwt.JwtAuthorizationFilter;
 import com.help.HelloPet.repository.UserRepository;
@@ -46,11 +44,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.addFilter(new JwtAuthenticationFilter(authenticationManager(),userRepository,passwordEncoder()))	//AuthenticationManager 를 줘야함 WebSecurityConfigurerAdapter가 포함하고있음
 		.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))	//AuthenticationManager
 		.authorizeRequests()
-		.antMatchers("/api/user/**")
+		.antMatchers("/user/**")
 		.access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-		.antMatchers("/api/manager/**")
+		.antMatchers("/manager/**")
 		.access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-		.antMatchers("/api/admin/**")
+		.antMatchers("/admin/**")
 		.access("hasRole('ROLE_ADMIN')")
 		.anyRequest()
 		.permitAll();

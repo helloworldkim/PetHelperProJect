@@ -77,7 +77,7 @@ class Register extends Component {
                 console.log("결과값:", res);
                 console.log(res.status);
                 // 결과값으로 받은 JWT토근을 session에 저장함
-                sessionStorage.setItem("Authorization", res.data.Authorization);
+                sessionStorage.setItem("Authorization", "Bearer "+res.data.Authorization);
                 let JWT = sessionStorage.getItem("Authorization");
                 console.log(JWT);
                 //홈경로로 보냄

@@ -6,6 +6,8 @@ import Register from './components/User/Register';
 import LoginForm from './components/User/LoginForm';
 import Logout from './components/User/Logout';
 import UserApiService from './components/ApiService/UserApiService';
+import Board_write from './components/board/Board_write';
+import Board_list from './components/board/Board_list';
 
 const JWT = sessionStorage.getItem("Authorization");
 class App extends Component {
@@ -99,6 +101,9 @@ class App extends Component {
                   <Link to="/board">게시판</Link>
                 </li>
                 <li className="nav-item m-2">
+                  <Link to="/board_write">게시판글쓰기</Link>
+                </li>
+                <li className="nav-item m-2">
                   <Link to="/pets">유기동물 정보 조회하기</Link>
                 </li>
                 <li className="nav-item m-2">
@@ -112,7 +117,8 @@ class App extends Component {
               <Route path="/login" component={LoginForm}></Route>
               <Route path="/logout" component={Logout}></Route>
               <Route path="/register" component={Register}></Route>
-              <Route path="/board" ></Route>
+              <Route path="/board" component={Board_list}></Route>
+              <Route path="/board_write" component={Board_write}></Route>
               <Route path="/pets" component={PetFinder}></Route>
             </Switch>
           </BrowserRouter>

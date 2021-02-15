@@ -1,0 +1,23 @@
+package com.help.HelloPet.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import com.help.HelloPet.model.Board;
+
+@Mapper
+public interface BoardMapper {
+	//offset 설정 (페이지번호 - 1) * 10(개씩)
+																		//10개 가져오고 	//위치0번째부터(첫번째부터)
+//	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT 10 OFFSET 0"})
+//	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT 0,10"})
+	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT #{pageNum},10"})
+	List<Board> getBoardList(@Param("pageNum") int pageNum);
+	
+	@Select({"SELECT count(*) FROM board"})
+	int getTotalBoard();
+
+}

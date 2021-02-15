@@ -38,6 +38,7 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
 	System.out.println("JwtAuthorizationFilter");
 	System.out.println("인증이나 권한이 필요한 주소요청 됨");
 	System.out.println(request);
+	System.out.println(request.getMethod());
 	String jwtHeader = request.getHeader("Authorization");
 	System.out.println("jwtHeader :"+jwtHeader);
 	
