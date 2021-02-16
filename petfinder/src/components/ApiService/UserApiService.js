@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/user'; //spring boot 접속 url
+const API_URL = 'http://localhost:8080'; //spring boot 접속 url
 
 class UserApiService {
 
@@ -11,7 +11,7 @@ class UserApiService {
         return axios.post('http://localhost:8080/login', User);
     }
     jwtcheck(token) {
-        return axios.get(API_URL+'/jwtcheck', { headers: { Authorization: token,'Content-Type': 'application/json' } });
+        return axios.get(API_URL+'/user/jwtcheck', { headers: { Authorization: token,'Content-Type': 'application/json' } });
     }
 }
 

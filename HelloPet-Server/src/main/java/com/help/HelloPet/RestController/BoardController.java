@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.help.HelloPet.config.auth.PrincipalDetails;
 import com.help.HelloPet.mapper.BoardMapper;
+import com.help.HelloPet.mapper.ReplyMapper;
 import com.help.HelloPet.model.Board;
 import com.help.HelloPet.repository.BoardRepository;
 
@@ -27,6 +28,9 @@ public class BoardController {
 	
 	@Autowired
 	BoardMapper boardMapper;
+	
+	@Autowired
+	ReplyMapper replyMapper;
 	
 	//글 작성때 사용되는 메소드
 	@PostMapping("/board/write")
@@ -50,13 +54,29 @@ public class BoardController {
 		System.out.println("board_list 호출");
 		System.out.println(pageNum);
 		List<Board> boardList = new ArrayList<>();
-//		(페이지번호 - 1) * 10
+		//(페이지번호 - 1) * 10
 		int offset = (pageNum-1) *10;
 		boardList = boardMapper.getBoardList(offset);
+		
 		int boardCount = boardMapper.getTotalBoard();
+		int totalPage; //총 페이지 수
+		int lastPage; //마지막페이지 넘버
+		
+		//총 페이지수를 구하는 로직
+		if(boardCount%10==0) {
+			totalPage =	boardCount/10;
+			lastPage = totalPage;
+		}else {
+			
+			totalPage =	boardCount/10+1;
+			lastPage = totalPage;
+		}
+		
 		Map<String,Object> map = new HashMap<>();
 		map.put("boardList", boardList);
 		map.put("boardCount", boardCount);
+		map.put("totalPage", totalPage);
+		map.put("lastPage", lastPage);
 		
 		return map;
 	}

@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import React, { Component } from "react";
 import BoardApiService from "../ApiService/BoardApiService";
+import Pagenation from "../Pagenation/Pagenation";
 import Board from "./Board";
 
 class Board_list extends Component {
@@ -16,30 +17,60 @@ class Board_list extends Component {
     this.state = {
         pageNum :1,
     };
+    this.getBoardList(1);
   }
 
   componentDidMount() {
-    this.getBoardList();
   }
+  
   //해당 게시판의 글 정보를 받아오는 메소드
-  getBoardList = () => {
-    BoardApiService.boardList(this.state.pageNum)
+  getBoardList = (pageNum) => {
+    console.log("getBoardLiST 메소드 호출");
+    console.log(pageNum);
+
+    BoardApiService.boardList(pageNum)
       .then((res) => {
         console.log(res);
         let BoardList = res.data.boardList;
         let BoardCount = res.data.boardCount;
-        this.setState({ BoardList: BoardList,BoardCount:BoardCount });
+        let TotalPage = res.data.totalPage;
+        let LastPage = res.data.lastPage;
+        this.setState({ 
+          BoardList: BoardList,
+          BoardCount:BoardCount,
+          TotalPage : TotalPage,
+          LastPage:LastPage,
+
+         });
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  
+
+  //페이지핸들러
+  pageHandler = ({ number }) => {
+    if (number === this.state.pageNum) {
+      alert('현재페이지입니다');
+      return;
+    }
+    if (number > this.state.TotalPage) {
+      alert('없는페이지입니다');
+      return;
+    }
+
+    this.setState({ pageNum: number }, () => {
+      this.getBoardList(this.state.pageNum);
+    });
+    // console.log(number);
+    // console.log('페이지변경한다??');
+  };
 
   render() {
     return (
       <Paper>
         <Table>
+          {/* 해당하는 목록이 어딘지 표시하는 머리부분 */}
           <TableHead>
             <TableRow>
               <TableCell>글번호</TableCell>
@@ -47,8 +78,11 @@ class Board_list extends Component {
               <TableCell>작성자</TableCell>
               <TableCell>조회수</TableCell>
               <TableCell>작성일</TableCell>
+              <TableCell>댓글수</TableCell>
+              <TableCell>상세보기</TableCell>
             </TableRow>
           </TableHead>
+          {/* 게시글 10개 가져와서 렌더링 하는부분 */}
           <TableBody>
             {this.state.BoardList
               ? this.state.BoardList.map((board) => {
@@ -57,6 +91,11 @@ class Board_list extends Component {
               : "게시글 로딩중입니다"}
           </TableBody>
         </Table>
+        {/* 페이징 하는부분 */}
+        <Pagenation
+              page={this.state.pageNum}
+              pageHandler={this.pageHandler}
+            />
       </Paper>
     );
   }

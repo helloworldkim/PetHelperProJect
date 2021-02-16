@@ -71,17 +71,13 @@ class App extends Component {
                 <li className="nav-item m-2">
                   <Link to="/board">게시판</Link>
                 </li>
-                <li className="nav-item m-2">
-                  <Link to="/pets">유기동물 정보 조회하기</Link>
-                </li>
               </ul>
             </nav>
             <Switch>
               <Route exact path="/" ></Route>
               <Route path="/login" component={LoginForm}></Route>
               <Route path="/register" component={Register}></Route>
-              <Route path="/board" ></Route>
-              <Route path="/pets" component={PetFinder}></Route>
+              <Route path="/board" component={Board_list}></Route>
             </Switch>
           </BrowserRouter>
 

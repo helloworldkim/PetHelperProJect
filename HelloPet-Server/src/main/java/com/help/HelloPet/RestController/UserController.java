@@ -51,7 +51,7 @@ public class UserController {
 		return "jwt체크중";
 	}
 	//회원가입 요청 왔을경우 해당 객체 생성 후 db저장 jwt토큰을 ResponseEntity에 담아서 리턴해준다.
-	@PostMapping(value = "/user/join")
+	@PostMapping(value = "/join")
 	public ResponseEntity<Map<String,String>> registerUser(@RequestBody User user) {
 		String encodedPassword= passwordEncoder.encode(user.getPassword());
 		User newUser = User.builder()
