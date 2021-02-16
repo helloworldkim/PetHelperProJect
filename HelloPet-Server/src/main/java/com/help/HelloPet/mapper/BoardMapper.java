@@ -20,5 +20,7 @@ public interface BoardMapper {
 	
 	@Select({"SELECT count(*) FROM board"})
 	int getTotalBoard();
-
+	
+	@Select({"SELECT * FROM board where id=#{boardid}"})
+	Board getBoardDetails(@Param("boardid") int boardid);
 }

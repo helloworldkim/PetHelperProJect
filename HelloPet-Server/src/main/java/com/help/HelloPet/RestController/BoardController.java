@@ -32,6 +32,15 @@ public class BoardController {
 	@Autowired
 	ReplyMapper replyMapper;
 	
+	@GetMapping("/board/details")
+	public Board board_details(@RequestParam(value = "boardid") int boardid) {
+		System.out.println("board_details 메소드 호출");
+		System.out.println(boardid);
+		Board board = boardMapper.getBoardDetails(boardid);
+		
+		return board;
+	}
+	
 	//글 작성때 사용되는 메소드
 	@PostMapping("/board/write")
 	public String board_write(@RequestBody Board board,Authentication authentication) {
