@@ -1,18 +1,20 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080'; //spring boot 접속 url
+const USER_URL = 'http://localhost:8080'; //spring boot 접속 url
 
 class UserApiService {
-
-    registerUser(User) {
-        return axios.post(API_URL+'/join', User);
-    }
-    login(User) {
-        return axios.post('http://localhost:8080/login', User);
-    }
-    jwtcheck(token) {
-        return axios.get(API_URL+'/user/jwtcheck', { headers: { Authorization: token,'Content-Type': 'application/json' } });
-    }
+  registerUser(User) {
+    return axios.post(USER_URL + '/join', User);
+  }
+  login(User) {
+    return axios.post('http://localhost:8080/login', User);
+  }
+  jwtcheck(token) {
+    return axios.get(USER_URL + '/user/jwtcheck', { headers: { Authorization: token, 'Content-Type': 'application/json' } });
+  }
+  getUserDetails(token) {
+    return axios.get(USER_URL + '/user/details', { headers: { Authorization: token, 'Content-Type': 'application/json' } });
+  }
 }
 
 export default new UserApiService();

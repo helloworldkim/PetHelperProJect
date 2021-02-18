@@ -16,13 +16,20 @@ public interface BoardMapper {
 //	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT 10 OFFSET 0"})
 //	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT 0,10"})
 //	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT #{pageNum},10"})
-	@Select({"select b.id,b.title,b.content,b.count,b.userid,b.createDate,COUNT(r.id) replyCount from board b left join reply r on b.id = r.boardid group by b.id, b.title,b.content, b.count,b.userid,b.createDate order by b.createDate desc LIMIT #{pageNum},10"})
+//	@Select({"select b.id,b.title,b.content,b.count,b.userid,b.createDate,COUNT(r.id) replyCount from board b left join reply r on b.id = r.boardid where b.deletedBoard = 0 group by b.id, b.title,b.content, b.count,b.userid,b.createDate order by b.createDate desc LIMIT #{pageNum},10"})
+	@Select({"select b.id,b.title,b.content,b.count,b.userid,b.createDate,COUNT(r.id) replyCount, u.username\r\n"
+			+ "from board b left join reply r on b.id = r.boardid \r\n"
+			+ "left join user u on b.userid = u.id\r\n"
+			+ "where b.deletedBoard = 0 \r\n"
+			+ "group by b.id, b.title,b.content, b.count,b.userid,b.createDate \r\n"
+			+ "order by b.createDate desc LIMIT #{pageNum},10;"})
 	List<Board> getBoardList(@Param("pageNum") int pageNum);
 	
 	@Select({"SELECT count(*) FROM board"})
 	int getTotalBoard();
 	
-	@Select({"SELECT * FROM board where id=#{boardid}"})
+//	@Select({"SELECT * FROM board where id=#{boardid}"})
+	@Select({"select b.*,u.username from board b left join user u on b.userid = u.id where b.id=#{boardid}"})
 	Board getBoardDetails(@Param("boardid") int boardid);
 
 	@Update({"UPDATE board SET count = count+1 where id = #{boardid}"})

@@ -15,7 +15,7 @@ class Board extends Component {
       <TableRow>
         <TableCell>{this.props.Board.id}</TableCell>
         <TableCell>{this.props.Board.title}</TableCell>
-        <TableCell>{this.props.Board.userid}</TableCell>
+        <TableCell>{this.props.Board.username}</TableCell>
         <TableCell>{this.props.Board.count}</TableCell>
         <TableCell>{this.props.Board.createDate}</TableCell>
         <TableCell>{this.props.Board.replyCount ? this.props.Board.replyCount : '0'}</TableCell>

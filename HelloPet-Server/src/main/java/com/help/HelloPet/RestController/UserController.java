@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.help.HelloPet.config.auth.PrincipalDetails;
 import com.help.HelloPet.config.jwt.JwtProperties;
 import com.help.HelloPet.config.jwt.MyJjwt;
 import com.help.HelloPet.model.User;
@@ -41,11 +43,22 @@ public class UserController {
 	
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
-	
-	@GetMapping("/redi")
-	public void redi(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.sendRedirect("http://localhost:3000/login");
+
+	//해당 유저 정보를 반환해주는 메서드
+	@GetMapping("/user/details")
+	public Map<String, Object> userDetails(Authentication authentication) {
+		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+		User user = principalDetails.getUser();
+		System.out.println("userDetails 메서드 호출");
+		user.setPassword("");
+		System.out.println("JWT에 저장된 user의 정보:"+user);
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("userDetails", user);
+		
+		return map;
 	}
+	
 	@GetMapping("/user/jwtcheck")
 	public String jwtcheck() {
 		return "jwt체크중";

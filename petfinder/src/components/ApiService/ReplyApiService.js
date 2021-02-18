@@ -8,10 +8,22 @@ class ReplyApiService {
     return axios.get(REPLY_URL + `?boardid=${boardid}&pageNum=${replyPageNum}`);
   }
 
-  //댓글 생성하는부분
+  //댓글 생성하는부분 post방식
   ReplyWrite(JWT, Reply) {
     return fetch(REPLY_URL + '/write', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: JWT,
+      },
+      body: JSON.stringify(Reply),
+    });
+  }
+
+  //댓글 삭제하는 메서드 delete
+  ReplyDelete(JWT, Reply) {
+    return fetch(REPLY_URL + '/delete', {
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         Authorization: JWT,

@@ -5,6 +5,7 @@ import JWTService from '../JWTService/JWTService';
 import ReplyApiService from '../ApiService/ReplyApiService';
 import Reply from '../reply/Reply';
 import MoreReply from '../reply/MoreReply';
+import UserApiService from '../ApiService/UserApiService';
 
 class Board_details extends Component {
   constructor(props) {
@@ -30,8 +31,39 @@ class Board_details extends Component {
     console.log(Number(query.boardid));
     //해당 게시물의 상세정보와 게시글 정보를 다 가져온다
     this.getBoardDetails(Number(query.boardid));
-    this.getReplyList(Number(query.boardid));
+    this.getUserDetails(Number(query.boardid));
   }
+  //JWT 토큰으로 해당 유저정보 호출
+  getUserDetails = (boardid) => {
+    const JWT = sessionStorage.getItem('Authorization');
+    console.log('board에서 체크하는 토큰값:', JWT);
+
+    //만약 사용자가 로그인 안한상태라면(JWT토큰없다면) 메서드 실행X
+    if (JWT == null) {
+      return;
+    }
+
+    //해당 유저정보 받는부분
+    UserApiService.getUserDetails(JWT)
+      .then((res) => {
+        console.log(res);
+        //전달받은 User정보
+        let UserDetails = res.data.userDetails;
+        this.setState(
+          {
+            UserDetails: UserDetails,
+          },
+          //정보를 받고 콜백함수
+          //댓글에 수정,삭제 부분을 위해서 현재 회원정보가 호출된 후에 댓글정보를 불러와야함
+          () => {
+            this.getReplyList(boardid);
+          }
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   //queryString에 있는 정보를 가져와 전달 객체형태로 반환받는다
   getQueryString = () => {
@@ -135,6 +167,37 @@ class Board_details extends Component {
       }
     );
   };
+  //댓글 삭제 수행 메서드
+  ReplyDelete = (replyid) => {
+    console.log('ReplyDelete 메서드 호출');
+    console.log('전달받은 댓글 id값:', replyid);
+
+    //삭제확인
+    if (!window.confirm('정말로 삭제하시겠습니까?')) {
+      return;
+    }
+
+    //토큰불러오기
+    const JWT = sessionStorage.getItem('Authorization');
+    console.log('ReplyDelete에서 체크하는 토큰값:', JWT);
+
+    //Reply 객체생성
+    let Reply = {
+      id: replyid,
+    };
+
+    //삭제메서드 수행
+    ReplyApiService.ReplyDelete(JWT, Reply)
+      .then((res) => {
+        console.log(res);
+        // 새로이 랜더링 시작
+        this.getReplyList(this.state.BoardDetails.id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   render() {
     return (
       <div className="container">
@@ -156,7 +219,7 @@ class Board_details extends Component {
               </tr>
               <tr>
                 <th>작성자</th>
-                <td>{this.state.BoardDetails.userid}</td>
+                <td>{this.state.BoardDetails.username}</td>
               </tr>
               <tr>
                 <th>조회수</th>
@@ -194,7 +257,7 @@ class Board_details extends Component {
         </div>
         {this.state.replyList
           ? this.state.replyList.map((reply) => {
-              return <Reply key={reply.id} reply={reply}></Reply>;
+              return <Reply key={reply.id} reply={reply} UserDetails={this.state.UserDetails} ReplyDelete={this.ReplyDelete}></Reply>;
             })
           : ''}
         {/* 댓글 갯수가 5개 이상, 현재 불러온 댓글 갯수가 총 갯수보다 작아야지만 댓글 더 보기를 보여준다 */}

@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +29,19 @@ public class ReplyController {
 	
 	@Autowired
 	ReplyRepository replyRepository;
+	//해당글을 삭제하는 메서드 deletedReply 를 1로 만든다
+	@DeleteMapping("/reply/delete")
+	public void ReplyDelete(@RequestBody Reply reply) {
+			System.out.println("ReplyDelete 메서드 호출");
+			System.out.println("전달받은 reply값:"+reply);
+			int replyid = reply.getId();
+			
+			//삭제수행
+			replyMapper.ReplyDelete(replyid);
+
+	}
 	
+	//해당 글의 댓글들을 특정 갯수만큼 반환하는 메서드
 	@GetMapping("/reply")
 	public Map<String,Object> getReplyList(@RequestParam(value = "boardid") int boardid,
 			@RequestParam(value = "pageNum",defaultValue = "1") int pageNum){

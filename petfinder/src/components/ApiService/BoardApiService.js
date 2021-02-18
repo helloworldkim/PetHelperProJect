@@ -14,6 +14,7 @@ class BoardApiService {
       body: JSON.stringify(Board),
     });
   }
+
   boardList(pageNum) {
     return axios.get(BOARD_URL + '/list?pageNum=' + pageNum);
   }
