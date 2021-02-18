@@ -1,6 +1,8 @@
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import BoardApiService from '../ApiService/BoardApiService';
+import JWTService from '../JWTService/JWTService';
 import Pagenation from '../Pagenation/Pagenation';
 import Board from './Board';
 
@@ -62,6 +64,17 @@ class Board_list extends Component {
     this.props.history.push('/Board_details?boardid=' + boardid);
   };
 
+  gotoBoardWrite = () => {
+    const JWT = sessionStorage.getItem('Authorization');
+    console.log('토큰값:', JWT);
+
+    //토큰값체크 없으면 로그인페이지로 보냄
+    JWTService.checkLogin(JWT);
+
+    //로그인 상태라면 write페이지로 보냄
+    this.props.history.push('/board_write');
+  };
+
   render() {
     return (
       <Paper>
@@ -88,7 +101,12 @@ class Board_list extends Component {
           </TableBody>
         </Table>
         {/* 페이징 하는부분 */}
-        <Pagenation page={this.state.pageNum} pageHandler={this.pageHandler} />
+        <button className="btn btn-primary float-right mr-5 mt-2" onClick={this.gotoBoardWrite}>
+          글쓰기
+        </button>
+        <div className="d-flex justify-content-center mt-2">
+          <Pagenation page={this.state.pageNum} pageHandler={this.pageHandler} />
+        </div>
       </Paper>
     );
   }

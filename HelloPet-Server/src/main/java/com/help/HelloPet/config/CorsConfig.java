@@ -1,5 +1,4 @@
 package com.help.HelloPet.config;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -16,7 +15,9 @@ public class CorsConfig  {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);	//서버가 응답할때 json을 자바스크립트에서 사용하게할지 설정하는부분
 //		config.addAllowedOrigin("*");		//모든 ip에 응답을 허용
-		config.addAllowedOrigin("http://localhost:3000");		//해당 사이트 주소만 허용!!!!!!하게 하니까 됨! 
+		config.addAllowedOrigin("http://192.168.10.7");		//localhost랑 내부ip는 따로따로 등록해줘야함
+		config.addAllowedOrigin("http://localhost");		//도메인으로 할때는 80번 포트는 생략
+//		config.addAllowedOrigin("http://localhost:3000");		//해당 사이트 주소만 허용!!!!!!하게 하니까 됨! 
 		config.addAllowedHeader("*");	//모든 header에 응답허용
 		config.addAllowedMethod("*");	// 모든 요청방법 post get put delete patch 등등
 		//해당주소로 접근하면 모든 크로스 오리진을 허락하는 설정적용

@@ -95,9 +95,6 @@ class App extends Component {
                   <Link to="/board">게시판</Link>
                 </li>
                 <li className="nav-item m-2">
-                  <Link to="/board_write">게시판글쓰기</Link>
-                </li>
-                <li className="nav-item m-2">
                   <Link to="/pets">유기동물 정보 조회하기</Link>
                 </li>
                 <li className="nav-item m-2">

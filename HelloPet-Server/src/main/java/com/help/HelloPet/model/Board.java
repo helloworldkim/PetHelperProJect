@@ -8,9 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,8 +51,12 @@ public class Board {
 //	@OneToMany(mappedBy = "board",fetch = FetchType.EAGER) //mappedBy 연관관계의 주인이 아니다! (FK가 아님)  DB에 컬럼을 따로 만들지말라고 요청함!
 //	private List<Reply> reply;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd HH시mm분ss초")// 데이터 포맷을 등록하면 받아서 자동으로 변환해줌
 	@CreationTimestamp
 	private Timestamp createDate;
-
+	
+	//임시변수 추가
+	@Transient
+	private int replyCount;
 	
 }

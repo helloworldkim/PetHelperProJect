@@ -36,6 +36,9 @@ public class BoardController {
 	public Board board_details(@RequestParam(value = "boardid") int boardid) {
 		System.out.println("board_details 메소드 호출");
 		System.out.println(boardid);
+		
+		//해당 게시글의 정보 부르기전 조회수를 증가함
+		boardMapper.updateBoardCount(boardid);
 		Board board = boardMapper.getBoardDetails(boardid);
 		
 		return board;
@@ -64,7 +67,10 @@ public class BoardController {
 		System.out.println(pageNum);
 		List<Board> boardList = new ArrayList<>();
 		//(페이지번호 - 1) * 10
-		int offset = (pageNum-1) *10;
+		int offset =0;
+		if(pageNum!=1 || pageNum<0) {
+			offset = (pageNum-1) *10;			
+		}
 		boardList = boardMapper.getBoardList(offset);
 		
 		int boardCount = boardMapper.getTotalBoard();
