@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import com.help.HelloPet.config.auth.PrincipalDetails;
 import com.help.HelloPet.mapper.BoardMapper;
 import com.help.HelloPet.mapper.ReplyMapper;
 import com.help.HelloPet.model.Board;
+import com.help.HelloPet.model.Reply;
 import com.help.HelloPet.repository.BoardRepository;
 
 
@@ -32,6 +34,19 @@ public class BoardController {
 	@Autowired
 	ReplyMapper replyMapper;
 	
+	//해당글을 삭제하는 메서드 deletedReply 를 1로 만든다
+	@DeleteMapping("/board/delete")
+	public void board_delete(@RequestBody Board board) {
+			System.out.println("ReplyDelete 메서드 호출");
+			System.out.println("전달받은 reply값:"+board);
+			int boardid = board.getId();
+			
+			//삭제수행
+			boardMapper.boardDelete(boardid);
+
+	}
+	
+	//게시글 하나의 정보를 전달해주는 메소드
 	@GetMapping("/board/details")
 	public Board board_details(@RequestParam(value = "boardid") int boardid) {
 		System.out.println("board_details 메소드 호출");

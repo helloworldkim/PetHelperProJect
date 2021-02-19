@@ -1,6 +1,5 @@
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import BoardApiService from '../ApiService/BoardApiService';
 import JWTService from '../JWTService/JWTService';
 import Pagenation from '../Pagenation/Pagenation';

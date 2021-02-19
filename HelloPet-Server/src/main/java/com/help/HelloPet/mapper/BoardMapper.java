@@ -2,6 +2,7 @@ package com.help.HelloPet.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -17,8 +18,13 @@ public interface BoardMapper {
 //	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT 0,10"})
 //	@Select({"SELECT t1.* from (SELECT * FROM board order by createDate desc) t1 LIMIT #{pageNum},10"})
 //	@Select({"select b.id,b.title,b.content,b.count,b.userid,b.createDate,COUNT(r.id) replyCount from board b left join reply r on b.id = r.boardid where b.deletedBoard = 0 group by b.id, b.title,b.content, b.count,b.userid,b.createDate order by b.createDate desc LIMIT #{pageNum},10"})
-	@Select({"select b.id,b.title,b.content,b.count,b.userid,b.createDate,COUNT(r.id) replyCount, u.username\r\n"
-			+ "from board b left join reply r on b.id = r.boardid \r\n"
+	@Select({"select b.id,b.title,b.content,b.count,b.userid,b.createDate, if( isnull(r.replyCount),0,r.replyCount) replyCount, u.username\r\n"
+			+ "from board b left join \r\n"
+			+ "(select r.*, count(r.deletedReply) replyCount \r\n"
+			+ "from reply r\r\n"
+			+ "where deletedReply=0\r\n"
+			+ "group by r.boardid) r \r\n"
+			+ "on b.id = r.boardid \r\n"
 			+ "left join user u on b.userid = u.id\r\n"
 			+ "where b.deletedBoard = 0 \r\n"
 			+ "group by b.id, b.title,b.content, b.count,b.userid,b.createDate \r\n"
@@ -34,4 +40,8 @@ public interface BoardMapper {
 
 	@Update({"UPDATE board SET count = count+1 where id = #{boardid}"})
 	void updateBoardCount(@Param("boardid")int boardid);
+	
+	
+	@Delete({"UPDATE board SET deletedBoard=1 where id=#{id}"})
+	void boardDelete(@Param(value = "id") int boardid);
 }

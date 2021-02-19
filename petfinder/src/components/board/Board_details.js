@@ -6,6 +6,7 @@ import ReplyApiService from '../ApiService/ReplyApiService';
 import Reply from '../reply/Reply';
 import MoreReply from '../reply/MoreReply';
 import UserApiService from '../ApiService/UserApiService';
+import './Board_details.css';
 
 class Board_details extends Component {
   constructor(props) {
@@ -13,15 +14,20 @@ class Board_details extends Component {
     this.state = {
       //호출시 기본값 설정없으면 오류 발생함 기본값 설정해둠
       BoardDetails: {
-        id: 1,
-        title: '',
-        userid: 1,
-        count: 0,
-        content: '',
-        createDate: '',
+        id: Number,
+        title: String,
+        userid: Number,
+        count: Number,
+        content: String,
+        createDate: String,
       },
       //기본 보여줄 댓글페이지 5개 기준 1페이지
       replyPageNum: 1,
+      //this.state 초기값 없는경우 삼항연산에서 오류발생함 기초값 설정
+      UserDetails: {
+        id: Number,
+        username: String,
+      },
     };
   }
 
@@ -30,7 +36,6 @@ class Board_details extends Component {
     let query = this.getQueryString();
     console.log(Number(query.boardid));
     //해당 게시물의 상세정보와 게시글 정보를 다 가져온다
-    this.getBoardDetails(Number(query.boardid));
     this.getUserDetails(Number(query.boardid));
   }
   //JWT 토큰으로 해당 유저정보 호출
@@ -54,8 +59,10 @@ class Board_details extends Component {
             UserDetails: UserDetails,
           },
           //정보를 받고 콜백함수
-          //댓글에 수정,삭제 부분을 위해서 현재 회원정보가 호출된 후에 댓글정보를 불러와야함
           () => {
+            //작성자 이름과 현재 로그인 사용자의 이름이 동일한경우 삭제,수정을 보여주는 형식이라 여기서 호출해야함
+            this.getBoardDetails(boardid);
+            //댓글에 수정,삭제 부분을 위해서 현재 회원정보가 호출된 후에 댓글정보를 불러와야함
             this.getReplyList(boardid);
           }
         );
@@ -198,6 +205,37 @@ class Board_details extends Component {
       });
   };
 
+  //게시글 삭제 수행 메서드
+  BoardDelete = (boardid) => {
+    console.log('BoardDelete 메서드 호출');
+    console.log('전달받은 댓글 id값:', boardid);
+
+    //삭제확인
+    if (!window.confirm('정말로 삭제하시겠습니까?')) {
+      return;
+    }
+
+    //토큰불러오기
+    const JWT = sessionStorage.getItem('Authorization');
+    console.log('ReplyDelete에서 체크하는 토큰값:', JWT);
+
+    //Reply 객체생성
+    let Board = {
+      id: boardid,
+    };
+
+    //삭제메서드 수행
+    BoardApiService.boardDelete(JWT, Board)
+      .then((res) => {
+        console.log(res);
+        // 응답이 제대로 오면 게시판 목록으로
+        this.gotoBoardList();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   render() {
     return (
       <div className="container">
@@ -205,7 +243,20 @@ class Board_details extends Component {
           <table className="table">
             <thead>
               <tr>
-                <th>상세보기</th>
+                <th className="text-justify">상세보기</th>
+                <td>
+                  {/* 작성자(username)와 현재 로그인한 사용자(username)가 동일할때만 보여준다 */}
+                  {this.state.BoardDetails.username === this.state.UserDetails.username ? (
+                    <>
+                      <div className="btn float-right m-2" onClick={() => this.BoardDelete(this.state.BoardDetails.id)}>
+                        삭제
+                      </div>
+                      <div className="btn float-right m-2">수정</div>
+                    </>
+                  ) : (
+                    ''
+                  )}
+                </td>
               </tr>
             </thead>
             <tbody>
@@ -230,8 +281,8 @@ class Board_details extends Component {
                 <td>{this.state.BoardDetails.createDate}</td>
               </tr>
               <tr>
-                <td>글내용</td>
-                <td>{this.state.BoardDetails.content}</td>
+                <th>글내용</th>
+                <td className="p-2 overFlow">{this.state.BoardDetails.content}</td>
               </tr>
             </tbody>
           </table>
