@@ -61,7 +61,8 @@ public class UserController {
 	
 	@GetMapping("/user/jwtcheck")
 	public String jwtcheck() {
-		return "jwt체크중";
+		//JWT토큰 유효성 검사 뒤 정상적으로 필터체인 통과했다면 성공값을 리턴해줌
+		return JwtProperties.TOKEN_SUCCESS;
 	}
 	//회원가입 요청 왔을경우 해당 객체 생성 후 db저장 jwt토큰을 ResponseEntity에 담아서 리턴해준다.
 	@PostMapping(value = "/join")

@@ -31,6 +31,17 @@ class ReplyApiService {
       body: JSON.stringify(Reply),
     });
   }
+
+  ReplyUpdate(JWT, Reply) {
+    return fetch(REPLY_URL + '/update', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: JWT,
+      },
+      body: JSON.stringify(Reply),
+    });
+  }
 }
 
 export default new ReplyApiService();

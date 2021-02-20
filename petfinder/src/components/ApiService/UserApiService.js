@@ -9,7 +9,7 @@ class UserApiService {
   login(User) {
     return axios.post('http://localhost:8080/login', User);
   }
-  jwtcheck(token) {
+  JWTCheck(token) {
     return axios.get(USER_URL + '/user/jwtcheck', { headers: { Authorization: token, 'Content-Type': 'application/json' } });
   }
   getUserDetails(token) {

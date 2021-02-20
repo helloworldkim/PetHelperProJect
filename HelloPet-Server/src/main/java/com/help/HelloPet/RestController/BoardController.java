@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +34,17 @@ public class BoardController {
 	
 	@Autowired
 	ReplyMapper replyMapper;
+	
+	//게시글을 수정하는 메서드
+	@PutMapping("/board/update")
+	public void board_update(@RequestBody Board board) {
+			System.out.println("board_update 메서드 호출");
+			System.out.println("전달받은 board값:"+board);
+			
+			//삭제수행
+			boardMapper.boardUpdate(board);
+
+	}
 	
 	//해당글을 삭제하는 메서드 deletedReply 를 1로 만든다
 	@DeleteMapping("/board/delete")

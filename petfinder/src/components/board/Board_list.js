@@ -56,7 +56,18 @@ class Board_list extends Component {
     });
   };
 
+  //해당 게시물의 상세정보를 불러오는 메소드
+  //회원정보가 필요하므로 부르기전 토큰값 체크
   getDetailsPage = (boardid) => {
+    let JWT = sessionStorage.getItem('Authorization');
+
+    //JWT토큰으로 로그인 여부 체크
+    //정상토큰의 경우에는 따로 리턴값을 받지않음 값이 존재한다면 만료 or 비정상토큰
+    let result = JWTService.validateUser(JWT);
+    if (result != null) {
+      return;
+    }
+
     console.log('getDetailsPage 메서드 호출');
     console.log(boardid);
     //디테일 페이지로 해당 게시글 인덱스 넘버를 가지고 이동한다

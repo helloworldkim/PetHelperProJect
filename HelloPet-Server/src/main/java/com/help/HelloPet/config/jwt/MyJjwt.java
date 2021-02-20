@@ -51,14 +51,14 @@ public class MyJjwt {
 			        .parseClaimsJws(jwtTokenString)
 			        .getBody();
 			if(claims!=null) {
-				return"정상토큰";
+				return JwtProperties.TOKEN_SUCCESS;
 			}
 		} catch (ExpiredJwtException  e) { //토큰만료시 오류
 			System.out.println(e);
-			return "토큰만료";
+			return JwtProperties.TOKEN_EXPIRED;
 		}catch(SignatureException e) {
 			System.out.println("JWT토큰 서명이 잘못되었습니다.");
-			return "비정상적인접근";
+			return JwtProperties.TOKEN_UNKMOWN;
 		}
 		catch(Exception e) {
 			System.out.println(e);

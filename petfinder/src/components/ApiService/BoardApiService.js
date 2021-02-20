@@ -36,6 +36,16 @@ class BoardApiService {
       body: JSON.stringify(Board),
     });
   }
+  boardUpdate(JWT, Board) {
+    return fetch(BOARD_URL + '/update', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: JWT,
+      },
+      body: JSON.stringify(Board),
+    });
+  }
 }
 
 export default new BoardApiService();

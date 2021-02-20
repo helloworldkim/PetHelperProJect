@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.help.HelloPet.model.Board;
+import com.help.HelloPet.model.Reply;
 
 @Mapper
 public interface BoardMapper {
@@ -44,4 +45,7 @@ public interface BoardMapper {
 	
 	@Delete({"UPDATE board SET deletedBoard=1 where id=#{id}"})
 	void boardDelete(@Param(value = "id") int boardid);
+
+	@Update({"UPDATE board set title=#{board.title},content=#{board.content} where id=#{board.id}"})
+	void boardUpdate(@Param(value ="board") Board board);
 }

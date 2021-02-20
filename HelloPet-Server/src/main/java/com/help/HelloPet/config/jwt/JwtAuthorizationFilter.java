@@ -50,17 +50,20 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
 	
 	//jwt 토큰이 있는경우
 	String jwtToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
+	
+	
+	//토큰 유효성 검사 후 결과값을 result에 저장
 	String result = MyJjwt.getTokenFromJwtString(jwtToken);
 	System.out.println(result);
 	
 	// 비정상 or 토큰만료의 경우 filter 체인 통과못하고 막힘
-	if(result.equals("비정상적인접근")) {
+	if(result.equals(JwtProperties.TOKEN_UNKMOWN)) {
 		PrintWriter out = response.getWriter();
-		out.print("비정상적인접근");
-	}else if(result.equals("토큰만료")) {
+		out.print(JwtProperties.TOKEN_UNKMOWN);
+	}else if(result.equals(JwtProperties.TOKEN_EXPIRED)) {
 		System.out.println("토큰유효기간이 만료됨");
 		PrintWriter out = response.getWriter();
-		out.print("토큰만료");
+		out.print(JwtProperties.TOKEN_EXPIRED);
 		
 	}else {
 

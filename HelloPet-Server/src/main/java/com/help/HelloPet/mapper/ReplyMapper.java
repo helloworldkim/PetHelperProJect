@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.help.HelloPet.model.Reply;
 
@@ -26,4 +27,7 @@ public interface ReplyMapper {
 	
 	@Delete({"UPDATE reply SET deletedReply=1 where id=#{id}"})
 	void ReplyDelete(@Param(value = "id") int replyid);
+
+	@Update({"UPDATE reply set content=#{reply.content} where id=#{reply.id}"})
+	void ReplyUpdate(@Param(value ="reply") Reply reply);
 }
